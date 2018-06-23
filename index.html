@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="static/exif.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/api.js" type="text/javascript" charset="utf-8"></script>
+		<title>就业APP</title>
+	</head>
+
+	<body>
+		<div id="app"></div>
+		<script type="text/javascript">
+			var isNeedBack = false;
+			apiready = function() {
+				api.addEventListener({
+					name: 'keyback'
+				}, function(ret, err) {
+					if(isNeedBack) {
+						history.go(-1);
+					} else {
+						api.closeWidget();
+					}
+				});
+				api.setStatusBarStyle({
+					style: 'dark',
+					color: '#bbbbbb'
+				});
+				var bmLocation = api.require('bmLocation');
+				bmLocation.singleLocation({
+					reGeocode: false,
+					netWorkState: false
+				}, function(ret) {
+					var sta = ret.status;
+					if(sta) {
+						var myAttrObj = {
+							country:ret.reGeo.country,
+							province:ret.reGeo.province,
+							city:ret.reGeo.city,
+							district:ret.reGeo.district,
+							adCode:ret.reGeo.adCode,
+						}
+						document.cookie = 'myAddr=' + JSON.stringify(myAttrObj);
+					} else {
+						api.alert({
+							msg: '定位失败'
+						});
+					}
+				});
+			}
+		</script>
+		<!-- built files will be auto injected -->
+	</body>
+
+</html>
